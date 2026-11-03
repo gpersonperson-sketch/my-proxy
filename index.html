@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 28px; padding: 24px;
+    font-family: system-ui, sans-serif; color: #eaeaff;
+    background:
+      radial-gradient(circle at 20% 20%, #3b1d8f 0%, transparent 45%),
+      radial-gradient(circle at 80% 70%, #0e7490 0%, transparent 45%),
+      #0b0b1a;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 8vw, 4.5rem); letter-spacing: -0.03em;
+    background: linear-gradient(90deg, #a78bfa, #22d3ee);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  p.sub { opacity: .6; margin-top: -18px; }
+  form {
+    display: flex; width: min(640px, 100%); padding: 8px;
+    border-radius: 999px; background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(14px);
+    box-shadow: 0 10px 40px rgba(0,0,0,.4);
+  }
+  input {
+    flex: 1; background: transparent; border: 0; outline: 0;
+    color: inherit; font-size: 1.05rem; padding: 12px 20px;
+  }
+  input::placeholder { color: rgba(234,234,255,.45); }
+  button.go {
+    border: 0; border-radius: 999px; padding: 12px 26px; cursor: pointer;
+    font-weight: 600; color: #0b0b1a;
+    background: linear-gradient(90deg, #a78bfa, #22d3ee);
+  }
+  .tiles { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 640px; }
+  .tile {
+    padding: 12px 20px; border-radius: 14px; cursor: pointer; color: inherit;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14);
+    transition: transform .15s, background .15s;
+  }
+  .tile:hover { transform: translateY(-3px); background: rgba(255,255,255,.14); }
+  small { opacity: .4; }
+</style>
+</head>
+<body>
+  <h1>Portal</h1>
+  <p class="sub">Search or enter a URL</p>
+
+  <form id="f">
+    <input id="q" placeholder="Search the web or type a URL" autocomplete="off" autofocus>
+    <button class="go">Go</button>
+  </form>
+
+  <div class="tiles">
+    <button class="tile" data-url="https://en.wikipedia.org">Wikipedia</button>
+    <button class="tile" data-url="https://html.duckduckgo.com/html/">DuckDuckGo</button>
+    <button class="tile" data-url="https://old.reddit.com">Reddit</button>
+    <button class="tile" data-url="https://news.ycombinator.com">Hacker News</button>
+    <button class="tile" data-url="https://www.bbc.com">BBC</button>
+  </div>
+  <small>Heavy sites like YouTube and Discord may not load.</small>
+
+<script>
+  function go(input) {
+    const q = input.trim();
+    if (!q) return;
+    let url;
+    if (/^https?:\/\//i.test(q)) url = q;
+    else if (/^[^\s]+\.[a-z]{2,}(\/.*)?$/i.test(q)) url = 'https://' + q;
+    else url = 'https://html.duckduckgo.com/html/?q=' + encodeURIComponent(q);
+    location.href = '/proxy/' + url;
+  }
+  document.getElementById('f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    go(document.getElementById('q').value);
+  });
+  document.querySelectorAll('.tile').forEach((b) =>
+    b.addEventListener('click', () => go(b.dataset.url)));
+</script>
+</body>
+</html>
